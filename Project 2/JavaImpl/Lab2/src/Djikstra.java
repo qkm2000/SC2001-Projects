@@ -1,11 +1,11 @@
-import org.w3c.dom.Node;
-
 import java.util.*;
-import java.util.function.Predicate;
 
 public class Djikstra {
 
     private static final int NO_PARENT = -1;
+    public static int OuterComparisonCount = 0;
+    public static int PQInnerCount = 0;
+    public static int PQSkippedComparisons = 0;
 
     public void NormalAlgo(int[][] adjMatrix, int startVertex) {
         int nVertices = adjMatrix[0].length;
@@ -47,112 +47,155 @@ public class Djikstra {
     }
 
     public void PriorityArrAlgo(int[][] adjMatrix, int startVertex) {
+        OuterComparisonCount = 0;
+        PQInnerCount = 0;
+        PQSkippedComparisons = 0;
         int nVertices = adjMatrix[0].length;
 
         int[] shortestDistances = new int[nVertices];
-        Set<Integer> visited = new HashSet<Integer>();
+        int[] visited = new int[nVertices];
         int[] parents = new int[nVertices];
 
         //Array based priority queue implementation
         PriorityQueueImpl queue = new PriorityQueueImpl(nVertices);
+        shortestDistances[startVertex] = 0;
 
         for (int i = 0; i < nVertices; i++) {
-            shortestDistances[i] = Integer.MAX_VALUE;
+            if(i != startVertex) {
+                shortestDistances[i] = Integer.MAX_VALUE;
+            }
+            parents[i] = NO_PARENT;
+            visited[i] = 0;
+            queue.add(new QNode(i, shortestDistances[i]));
         }
 
-        shortestDistances[startVertex] = 0;
-        parents[startVertex] = NO_PARENT;
-        queue.add(new QNode(startVertex, 0));
-
+        PQInnerCount = 0;
 
         while (!queue.isEmpty()) {
-            int u = ((QNode)queue.remove()).node;
-
-            visited.add(u);
+            QNode currNode = ((QNode)queue.remove());
+            int u = currNode.node;
 
             int edgeDistance;
             int newDistance;
 
             // All the neighbors of v
             for (int i = 0; i < adjMatrix[u].length; i++) {
+                OuterComparisonCount++;
                 QNode v = new QNode(i, adjMatrix[u][i]);
                 //  If it's an edge & If current node hasn't already been processed
-                if (v.cost > 0 && !visited.contains(v.node)) {
+                if (v.cost > 0) {
                     edgeDistance = v.cost;
                     newDistance = shortestDistances[u] + edgeDistance;
 
                     // If new distance is cheaper in cost
                     if (newDistance < shortestDistances[v.node]) {
-                        // Remove all old instances of nodes
-                        if(!queue.isEmpty())
-                            queue.remove(v);
-
                         parents[v.node] = u;
                         shortestDistances[v.node] = newDistance;
+                        // Remove all old instances of nodes
+                        // Add the current node to the queue with updated distance
+                        if(!queue.isEmpty())
+                            queue.remove(v);
+                        queue.add(new QNode(v.node, shortestDistances[v.node]));
                     }
 
-                    // Add the current node to the queue
-                    queue.add(new QNode(v.node, shortestDistances[v.node]));
                 }
 
             }
         }
         printSolution(startVertex, shortestDistances, parents);
+        System.out.println("count " + OuterComparisonCount);
+        System.out.println("PQcount " + PQInnerCount);
     }
 
+//    https://stackoverflow.com/questions/26547816/understanding-time-complexity-calculation-for-dijkstra-algorithm
+//    E is edges and V is vertices. Number of edges
+//          (V *(V-1)) / 2
+//    approximately
+//          V ^ 2
+//    So we can add maximum V^2 edges to the min heap. So sorting the elements in min heap will take
+//          O(Log(V ^ 2))
+//    Every time we insert a new element into min heap, we are going to sort. We will have E edges so we will be sorting E times. so total time complexity
+//          O(E * Log(V ^ 2)= O( 2 * E * Log(V))
+//    Omitting the constant 2:
+//          O( E * Log(V))
     public void PriorityMinHeapAlgo(ArrayList<ArrayList<QNode>> adjList, int startVertex) {
+        OuterComparisonCount = 0;
+        PQInnerCount = 0;
         int nVertices = adjList.size();
 
         int[] shortestDistances = new int[nVertices];
-        Set<Integer> visited = new HashSet<Integer>();
+        int[] visited = new int[nVertices];
         int[] parents = new int[nVertices];
 
         //Default Java priority queue implementation (minimizing heap tree)
-        PriorityQueue<QNode> queue = new PriorityQueue<>();
+//        PriorityQueue<QNode> queue = new PriorityQueue<>((o1, o2) -> {
+//            Djikstra.PQInnerCount++;
+//            if (o1.cost < o2.cost)
+//                return -1;
+//            else if (o1.cost > o2.cost)
+//                return 1;
+//
+//            return 0;
+//        });
+
+        UpdatableHeap<Integer> queue = new UpdatableHeap<>();
+        shortestDistances[startVertex] = 0;
 
         for (int i = 0; i < nVertices; i++) {
-            shortestDistances[i] = Integer.MAX_VALUE;
+            if(i != startVertex) {
+                shortestDistances[i] = Integer.MAX_VALUE;
+            }
+            parents[i] = NO_PARENT;
+            visited[i] = 0;
+            //queue.add(new QNode(i, shortestDistances[i]));
+            queue.addOrUpdate(i, shortestDistances[i]);
         }
 
-        shortestDistances[startVertex] = 0;
-        parents[startVertex] = NO_PARENT;
-        queue.add(new QNode(startVertex, 0));
+        PQInnerCount = 0;
+        int edges = 0;
+        for(int i = 0 ; i < nVertices; i++)
+                edges += adjList.get(i).size();
 
 
         while (!queue.isEmpty()) {
-            int u = ((QNode)queue.remove()).node;
-
-            visited.add(u);
-
+            //int u = ((QNode)queue.remove()).node;
+            int u = queue.pop();
             int edgeDistance;
             int newDistance;
 
             // All the neighbors of v
             for (int i = 0; i < adjList.get(u).size(); i++) {
+                OuterComparisonCount++;
                 QNode v = adjList.get(u).get(i);
                 //  It is always an edge for a adjList so there is no need to check.
                 //  Check if current node hasn't already been processed
-                if (!visited.contains(v.node)) {
                     edgeDistance = v.cost;
                     newDistance = shortestDistances[u] + edgeDistance;
 
                     // If new distance is cheaper in cost
                     if (newDistance < shortestDistances[v.node]) {
                         // Remove all old instances of nodes
-                        if(!queue.isEmpty())
-                            queue.removeIf(x->x.node == v.node); // To change to manual?
-
+//                        if(!queue.isEmpty()) {
+//                            queue.removeIf(x -> {
+//                                //PQInnerCount++;
+//                                return x.node == v.node;
+//                            }); // To change to manual?
+//                        }
                         parents[v.node] = u;
                         shortestDistances[v.node] = newDistance;
+                        //queue.add(new QNode(v.node, shortestDistances[v.node]));
+                        queue.addOrUpdate(v.node,shortestDistances[v.node]);
                     }
 
-                    // Add the current node to the queue
-                    queue.add(new QNode(v.node, shortestDistances[v.node]));
-                }
+                //}
 
             }
         }
         printSolution(startVertex, shortestDistances, parents);
+        System.out.println("No of edges = " + edges);
+        System.out.println("count " + OuterComparisonCount);
+        System.out.println("PQcount " + PQInnerCount);
+
     }
 
     private void printSolution(int startVertex, int[] distances, int[] parents) {

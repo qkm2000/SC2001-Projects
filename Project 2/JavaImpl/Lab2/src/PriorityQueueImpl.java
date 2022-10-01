@@ -13,7 +13,17 @@ public class PriorityQueueImpl {
     }
 
     public void add(Comparable item) {
-        pQueue.add(item);
+        int maxIndex = 0;
+        // find the index of the item with the lowest cost priority
+        for (int i = 0; i < pQueue.size(); i++) {
+            Djikstra.PQInnerCount++;
+            if (item.compareTo(pQueue.get(i)) < 0) {
+                break;
+            }else{
+                maxIndex++;
+            }
+        }
+        pQueue.add(maxIndex, item);
         //System.out.println("Adding element: "+item);
     }
 
@@ -23,12 +33,12 @@ public class PriorityQueueImpl {
             return null;
         }
         int maxIndex = 0;
-        // find the index of the item with the lowest cost priority
-        for (int i = 0; i < pQueue.size(); i++) {
-            if (pQueue.get(i).compareTo(pQueue.get(maxIndex)) < 0) {
-                maxIndex = i;
-            }
-        }
+//        // find the index of the item with the lowest cost priority
+//        for (int i = 1; i < pQueue.size(); i++) {
+//            if (pQueue.get(i).compareTo(pQueue.get(maxIndex)) < 0) {
+//                maxIndex = i;
+//            }
+//        }
         Comparable result = pQueue.get(maxIndex);
         //System.out.println("removing: "+result);
         pQueue.remove(maxIndex);
@@ -47,6 +57,7 @@ public class PriorityQueueImpl {
         int maxIndex = 0;
         // find the index of the item with the lowest cost priority
         for (int i = 0; i < pQueue.size(); i++) {
+            Djikstra.PQInnerCount++;
             if (((QNode)pQueue.get(i)).node == item.node) {
                 pQueue.remove(i);
                 i--;

@@ -17,7 +17,7 @@ public class Main {
                 {0, 0, 2, 0, 0, 0, 6, 7, 0}};
 
         int graph2[][] = {
-                {0, 0, 6, 3, 7, 5,0, 7, 4, 2},
+                {0, 0, 6, 3, 7, 5, 0, 7, 4, 2},
                 {0, 3, 8, 0, 3, 7, 3, 6, 7, 2},
                 {2, 0, 3, 6, 5, 1, 1, 3, 2, 8},
                 {3, 6, 9, 4, 9, 3, 1, 5, 6, 9},
@@ -36,7 +36,7 @@ public class Main {
             }
         }
         Djikstra djikstra = new Djikstra();
-        var graphToTry = graph1;
+        var graphToTry = graph3;
 
         djikstra.NormalAlgo(graphToTry, 0);
         djikstra.PriorityArrAlgo(graphToTry, 0);
