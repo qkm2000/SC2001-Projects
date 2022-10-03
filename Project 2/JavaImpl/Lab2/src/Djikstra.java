@@ -5,6 +5,7 @@ public class Djikstra {
     private static final int NO_PARENT = -1;
     public static int OuterComparisonCount = 0;
     public static int PQInnerCount = 0;
+    public static int[] pp;
 
     public void NormalAlgo(int[][] adjMatrix, int startVertex) {
         int nVertices = adjMatrix[0].length;
@@ -42,6 +43,8 @@ public class Djikstra {
                 }
             }
         }
+        pp = shortestDistances;
+
         printSolution(startVertex, shortestDistances, parents);
     }
 
@@ -81,21 +84,14 @@ public class Djikstra {
                 OuterComparisonCount++;
                 QNode v = new QNode(i, adjMatrix[u][i]);
                 //  If it's an edge & If current node hasn't already been processed
-                if (v.cost > 0) {
-                    edgeDistance = v.cost;
-                    newDistance = shortestDistances[u] + edgeDistance;
-
-                    // If new distance is cheaper in cost
-                    if (newDistance < shortestDistances[v.node]) {
+                if (v.cost > 0 && (shortestDistances[u] + v.cost) < shortestDistances[v.node]) {
                         parents[v.node] = u;
-                        shortestDistances[v.node] = newDistance;
+                        shortestDistances[v.node] = shortestDistances[u] + v.cost;
                         // Remove all old instances of nodes
                         // Add the current node to the queue with updated distance
                         if(!queue.isEmpty())
                             queue.remove(v);
                         queue.add(new QNode(v.node, shortestDistances[v.node]));
-                    }
-
                 }
 
             }
@@ -104,6 +100,9 @@ public class Djikstra {
         System.out.println("Total Comparison Count " + (OuterComparisonCount + PQInnerCount));
         //System.out.println("count " + OuterComparisonCount);
         //System.out.println("PQcount " + PQInnerCount);
+        //pp = parents;
+       // CheckResult(pp, shortestDistances);
+
         return OuterComparisonCount + PQInnerCount;
     }
 
@@ -185,7 +184,22 @@ public class Djikstra {
         printSolution(startVertex, shortestDistances, parents);
         System.out.println("No of edges = " + edges);
         System.out.println("Total Comparison Count " +(OuterComparisonCount + PQInnerCount));
+        //CheckResult(pp, shortestDistances);
         return OuterComparisonCount + PQInnerCount;
+    }
+
+
+    private void CheckResult(int[] pp, int[] parents) {
+//        for(int i = 0; i < parents.length; i++){
+//            if(pp[i] != parents[i]) {
+//                System.out.println("Failed " + i + " " + pp[i]);
+//                return;
+//            }
+//        }
+        int sumA = Arrays.stream(pp).sum();
+        int sumB = Arrays.stream(parents).sum();
+
+        System.out.println(sumB - sumA == 0? "===SAME SAME===" : "*****FAILED****** diff: " + (sumB-sumA));
     }
 
     private void printSolution(int startVertex, int[] distances, int[] parents) {

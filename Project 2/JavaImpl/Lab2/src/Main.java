@@ -11,17 +11,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    private static final int GRAPH_SIZE = 100;
+    private static final int GRAPH_SIZE = 10;
+
     public static void main(String[] args) throws IOException {
 //        int graph1[][] = new int[][]{
 //                {0, 4, 0, 0, 0, 0, 0, 8, 0},
-//                {4, 0, 8, 0, 0, 0, 0,11, 0},
+//                {4, 0, 8, 0, 0, 0, 0, 11, 0},
 //                {0, 8, 0, 7, 0, 4, 0, 0, 2},
-//                {0, 0, 7, 0, 9,14, 0, 0, 0},
-//                {0, 0, 0, 9, 0,10, 0, 0, 0},
-//                {0, 0, 4,14,10, 0, 2, 0, 0},
+//                {0, 0, 7, 0, 9, 14, 0, 0, 0},
+//                {0, 0, 0, 9, 0, 10, 0, 0, 0},
+//                {0, 0, 4, 14, 10, 0, 2, 0, 0},
 //                {0, 0, 0, 0, 0, 2, 0, 1, 6},
-//                {8,11, 0, 0, 0, 0, 1, 0, 7},
+//                {8, 11, 0, 0, 0, 0, 1, 0, 7},
 //                {0, 0, 2, 0, 0, 0, 6, 7, 0}
 //        };
 //
@@ -38,12 +39,14 @@ public class Main {
 //                {2, 3, 0, 0, 9, 4, 4, 5, 8, 1}};
 //
 //        int graph3[][] = new int[GRAPH_SIZE][GRAPH_SIZE];
-//        Random rand = new Random(0);
-//        for(int i = 0 ; i < graph3.length; i++){
-//            for(int j = 0; j < graph3[i].length; j++){
-//                graph3[i][j] = rand.nextInt(0,16);
+//        Random rand = new Random();
+//
+//        for (int i = 0; i < graph3.length; i++) {
+//            for (int j = 0; j < graph3[i].length; j++) {
+//                graph3[i][j] = rand.nextInt(0, 16);
 //            }
 //        }
+        //var graphToTry = graph3;
         Djikstra djikstra = new Djikstra();
 
         String filePath = "test cases and results/";
@@ -51,11 +54,11 @@ public class Main {
         List<String[]> Result = new ArrayList<>();
 
         List<Path> files;
-        try(Stream<Path> paths = Files.walk(Paths.get(filePath))){
+        try (Stream<Path> paths = Files.walk(Paths.get(filePath))) {
             files = paths.filter(Files::isRegularFile).toList();
         }
 
-        for(Path file : files) {
+        for (Path file : files) {
             ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
 
             try (BufferedReader reader = new BufferedReader(new FileReader(file.toAbsolutePath().toString()))) {
@@ -80,9 +83,10 @@ public class Main {
             }
             int[][] graphToTry = arr.stream().map(u -> u.stream().mapToInt(i -> i).toArray()).toArray(int[][]::new);
 
+
             long Start, End;
             long res;
-            System.out.println("======="+file.getFileName()+"=======");
+            System.out.println("=======" + file.getFileName() + "=======");
             //djikstra.NormalAlgo(graphToTry, 0);
             System.out.println("=====Array=====");
             {
@@ -116,15 +120,15 @@ public class Main {
         }
     }
 
-    public static ArrayList<ArrayList<QNode>> AdjMatrixToAdjList(int[][] adjMatrix){
+    public static ArrayList<ArrayList<QNode>> AdjMatrixToAdjList(int[][] adjMatrix) {
         ArrayList<ArrayList<QNode>> adjList = new ArrayList<>();
         int nodeCost;
-        for(int i = 0 ; i < adjMatrix.length; i++){
+        for (int i = 0; i < adjMatrix.length; i++) {
             adjList.add(new ArrayList<>());
-            for(int j = 0; j < adjMatrix[i].length; j++){
+            for (int j = 0; j < adjMatrix[i].length; j++) {
                 nodeCost = adjMatrix[i][j];
-                if(nodeCost > 0)
-                    adjList.get(i).add(new QNode(j,nodeCost));
+                if (nodeCost > 0)
+                    adjList.get(i).add(new QNode(j, nodeCost));
             }
         }
         return adjList;
