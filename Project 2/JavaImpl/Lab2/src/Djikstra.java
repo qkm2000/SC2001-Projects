@@ -5,7 +5,6 @@ public class Djikstra {
     private static final int NO_PARENT = -1;
     public static int OuterComparisonCount = 0;
     public static int PQInnerCount = 0;
-    public static int PQSkippedComparisons = 0;
 
     public void NormalAlgo(int[][] adjMatrix, int startVertex) {
         int nVertices = adjMatrix[0].length;
@@ -46,10 +45,9 @@ public class Djikstra {
         printSolution(startVertex, shortestDistances, parents);
     }
 
-    public void PriorityArrAlgo(int[][] adjMatrix, int startVertex) {
+    public long PriorityArrAlgo(int[][] adjMatrix, int startVertex) {
         OuterComparisonCount = 0;
         PQInnerCount = 0;
-        PQSkippedComparisons = 0;
         int nVertices = adjMatrix[0].length;
 
         int[] shortestDistances = new int[nVertices];
@@ -103,22 +101,15 @@ public class Djikstra {
             }
         }
         printSolution(startVertex, shortestDistances, parents);
-        System.out.println("count " + OuterComparisonCount);
-        System.out.println("PQcount " + PQInnerCount);
+        System.out.println("Total Comparison Count " + (OuterComparisonCount + PQInnerCount));
+        //System.out.println("count " + OuterComparisonCount);
+        //System.out.println("PQcount " + PQInnerCount);
+        return OuterComparisonCount + PQInnerCount;
     }
 
 //    https://stackoverflow.com/questions/26547816/understanding-time-complexity-calculation-for-dijkstra-algorithm
-//    E is edges and V is vertices. Number of edges
-//          (V *(V-1)) / 2
-//    approximately
-//          V ^ 2
-//    So we can add maximum V^2 edges to the min heap. So sorting the elements in min heap will take
-//          O(Log(V ^ 2))
-//    Every time we insert a new element into min heap, we are going to sort. We will have E edges so we will be sorting E times. so total time complexity
-//          O(E * Log(V ^ 2)= O( 2 * E * Log(V))
-//    Omitting the constant 2:
-//          O( E * Log(V))
-    public void PriorityMinHeapAlgo(ArrayList<ArrayList<QNode>> adjList, int startVertex) {
+
+    public long PriorityMinHeapAlgo(ArrayList<ArrayList<QNode>> adjList, int startVertex) {
         OuterComparisonCount = 0;
         PQInnerCount = 0;
         int nVertices = adjList.size();
@@ -193,9 +184,8 @@ public class Djikstra {
         }
         printSolution(startVertex, shortestDistances, parents);
         System.out.println("No of edges = " + edges);
-        System.out.println("count " + OuterComparisonCount);
-        System.out.println("PQcount " + PQInnerCount);
-
+        System.out.println("Total Comparison Count " +(OuterComparisonCount + PQInnerCount));
+        return OuterComparisonCount + PQInnerCount;
     }
 
     private void printSolution(int startVertex, int[] distances, int[] parents) {
@@ -203,7 +193,10 @@ public class Djikstra {
         System.out.printf("%-11s %8s %7s","Vertex", "Distance","Path");
 
         for (int vertexIndex = 0; vertexIndex < nVertices; vertexIndex++) {
-            if (vertexIndex != startVertex) {
+            //Print All
+            //if (vertexIndex != startVertex) {
+            //Print Start->End
+            if (vertexIndex == nVertices -1) {
                 System.out.printf("\n%2d -> ", startVertex);
                 System.out.printf("%-2d \t",vertexIndex);
                 System.out.printf("%-3d \t\t",distances[vertexIndex]);
