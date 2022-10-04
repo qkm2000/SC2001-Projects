@@ -57,13 +57,13 @@ public class PriorityQueueImpl {
         int maxIndex = 0;
         // find the index of the item with the lowest cost priority
         for (int i = 0; i < pQueue.size(); i++) {
-            //Djikstra.PQInnerCount++;
+            Djikstra.PQInnerCount++;
             if (((QNode)pQueue.get(i)).node == item.node) {
-                pQueue.remove(i);
-
+                maxIndex = i;
                 // If I add this break it optimizes the whole thing by alot :(
-                // break;
+                break;
             }
         }
+        pQueue.remove(maxIndex);
     }
 }

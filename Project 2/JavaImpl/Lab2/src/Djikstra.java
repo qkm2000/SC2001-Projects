@@ -58,7 +58,7 @@ public class Djikstra {
         int[] parents = new int[nVertices];
 
         //Array based priority queue implementation
-        PriorityQueueImpl queue = new PriorityQueueImpl(nVertices);
+        PriorityQueueImpl queue = new PriorityQueueImpl(nVertices*nVertices);
         shortestDistances[startVertex] = 0;
 
         for (int i = 0; i < nVertices; i++) {
@@ -72,17 +72,17 @@ public class Djikstra {
 
         PQInnerCount = 0;
 
-        while (!queue.isEmpty()) {
-            QNode currNode = ((QNode)queue.remove());
+        while (!queue.isEmpty()) {//V
+            QNode currNode = ((QNode)queue.remove()); //1
             int u = currNode.node;
 
             int edgeDistance;
             int newDistance;
 
             // All the neighbors of v
-            for (int i = 0; i < adjMatrix[u].length; i++) {
-                OuterComparisonCount++;
+            for (int i = 0; i < adjMatrix[u].length; i++) { //V
                 QNode v = new QNode(i, adjMatrix[u][i]);
+                OuterComparisonCount++;
                 //  If it's an edge & If current node hasn't already been processed
                 if (v.cost > 0 && (shortestDistances[u] + v.cost) < shortestDistances[v.node]) {
                         parents[v.node] = u;
@@ -90,8 +90,8 @@ public class Djikstra {
                         // Remove all old instances of nodes
                         // Add the current node to the queue with updated distance
                         if(!queue.isEmpty())
-                            queue.remove(v);
-                        queue.add(new QNode(v.node, shortestDistances[v.node]));
+                            queue.remove(v); //E
+                        queue.add(new QNode(v.node, shortestDistances[v.node])); //E
                 }
 
             }

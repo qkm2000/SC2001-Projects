@@ -14,17 +14,17 @@ public class Main {
     private static final int GRAPH_SIZE = 10;
 
     public static void main(String[] args) throws IOException {
-//        int graph1[][] = new int[][]{
-//                {0, 4, 0, 0, 0, 0, 0, 8, 0},
-//                {4, 0, 8, 0, 0, 0, 0, 11, 0},
-//                {0, 8, 0, 7, 0, 4, 0, 0, 2},
-//                {0, 0, 7, 0, 9, 14, 0, 0, 0},
-//                {0, 0, 0, 9, 0, 10, 0, 0, 0},
-//                {0, 0, 4, 14, 10, 0, 2, 0, 0},
-//                {0, 0, 0, 0, 0, 2, 0, 1, 6},
-//                {8, 11, 0, 0, 0, 0, 1, 0, 7},
-//                {0, 0, 2, 0, 0, 0, 6, 7, 0}
-//        };
+        int graph1[][] = new int[][]{
+                {0, 4, 0, 0, 0, 0, 0, 8, 0},
+                {4, 0, 8, 0, 0, 0, 0, 11, 0},
+                {0, 8, 0, 7, 0, 4, 0, 0, 2},
+                {0, 0, 7, 0, 9, 14, 0, 0, 0},
+                {0, 0, 0, 9, 0, 10, 0, 0, 0},
+                {0, 0, 4, 14, 10, 0, 2, 0, 0},
+                {0, 0, 0, 0, 0, 2, 0, 1, 6},
+                {8, 11, 0, 0, 0, 0, 1, 0, 7},
+                {0, 0, 2, 0, 0, 0, 6, 7, 0}
+        };
 //
 //        int graph2[][] = {
 //                {0, 0, 6, 3, 7, 5, 0, 7, 4, 2},
@@ -83,7 +83,7 @@ public class Main {
             }
             int[][] graphToTry = arr.stream().map(u -> u.stream().mapToInt(i -> i).toArray()).toArray(int[][]::new);
 
-
+            //graphToTry = graph1;
             long Start, End;
             long res;
             System.out.println("=======" + file.getFileName() + "=======");
