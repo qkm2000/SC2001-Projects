@@ -5,7 +5,7 @@ public class Djikstra {
     private static final int NO_PARENT = -1;
     public static int OuterComparisonCount = 0;
     public static int PQInnerCount = 0;
-    public static int[] pp;
+    public static int[] originalParent;
 
     public void NormalAlgo(int[][] adjMatrix, int startVertex) {
         int nVertices = adjMatrix[0].length;
@@ -15,7 +15,7 @@ public class Djikstra {
         int[] parents = new int[nVertices];
 
         for (int i = 0; i < nVertices; i++) {
-            shortestDistances[i] = Integer.MAX_VALUE;
+            shortestDistances[i] = Integer.MAX_VALUE/2;
             added[i] = false;
         }
 
@@ -43,7 +43,7 @@ public class Djikstra {
                 }
             }
         }
-        pp = shortestDistances;
+        //originalParent = shortestDistances;
 
         printSolution(startVertex, shortestDistances, parents);
     }
@@ -63,7 +63,7 @@ public class Djikstra {
 
         for (int i = 0; i < nVertices; i++) {
             if(i != startVertex) {
-                shortestDistances[i] = Integer.MAX_VALUE;
+                shortestDistances[i] = Integer.MAX_VALUE/2;
             }
             parents[i] = NO_PARENT;
             visited[i] = 0;
@@ -71,11 +71,9 @@ public class Djikstra {
         }
 
         PQInnerCount = 0;
-
         while (!queue.isEmpty()) {//V
             QNode currNode = ((QNode)queue.remove()); //1
             int u = currNode.node;
-
             int edgeDistance;
             int newDistance;
 
@@ -84,25 +82,30 @@ public class Djikstra {
                 QNode v = new QNode(i, adjMatrix[u][i]);
                 OuterComparisonCount++;
                 //  If it's an edge & If current node hasn't already been processed
-                if (v.cost > 0 && (shortestDistances[u] + v.cost) < shortestDistances[v.node]) {
+                if (v.cost > 0) {
+                    edgeDistance = v.cost;
+                    newDistance = shortestDistances[u] + edgeDistance;
+
+                    // If new distance is cheaper in cost
+                    if (newDistance < shortestDistances[v.node]) {
                         parents[v.node] = u;
-                        shortestDistances[v.node] = shortestDistances[u] + v.cost;
+                        shortestDistances[v.node] = newDistance;
+
                         // Remove all old instances of nodes
                         // Add the current node to the queue with updated distance
-                        if(!queue.isEmpty())
-                            queue.remove(v); //E
-                        queue.add(new QNode(v.node, shortestDistances[v.node])); //E
+                        if (!queue.isEmpty())
+                            queue.remove(v); //2V
+                        queue.add(new QNode(v.node, shortestDistances[v.node])); //2V
+                    }
                 }
-
             }
         }
         printSolution(startVertex, shortestDistances, parents);
         System.out.println("Total Comparison Count " + (OuterComparisonCount + PQInnerCount));
         //System.out.println("count " + OuterComparisonCount);
         //System.out.println("PQcount " + PQInnerCount);
-        //pp = parents;
-       // CheckResult(pp, shortestDistances);
-
+        //CheckResult(originalParent, shortestDistances);
+        //originalParent = parents;
         return OuterComparisonCount + PQInnerCount;
     }
 
@@ -133,7 +136,7 @@ public class Djikstra {
 
         for (int i = 0; i < nVertices; i++) {
             if(i != startVertex) {
-                shortestDistances[i] = Integer.MAX_VALUE;
+                shortestDistances[i] = Integer.MAX_VALUE/2;
             }
             parents[i] = NO_PARENT;
             visited[i] = 0;
@@ -183,19 +186,13 @@ public class Djikstra {
         }
         printSolution(startVertex, shortestDistances, parents);
         System.out.println("No of edges = " + edges);
-        System.out.println("Total Comparison Count " +(OuterComparisonCount + PQInnerCount));
-        //CheckResult(pp, shortestDistances);
+        //System.out.println("Total Comparison Count " +(OuterComparisonCount + PQInnerCount));
+        //CheckResult(originalParent, shortestDistances);
         return OuterComparisonCount + PQInnerCount;
     }
 
 
     private void CheckResult(int[] pp, int[] parents) {
-//        for(int i = 0; i < parents.length; i++){
-//            if(pp[i] != parents[i]) {
-//                System.out.println("Failed " + i + " " + pp[i]);
-//                return;
-//            }
-//        }
         int sumA = Arrays.stream(pp).sum();
         int sumB = Arrays.stream(parents).sum();
 

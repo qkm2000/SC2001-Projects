@@ -24,7 +24,6 @@ public class PriorityQueueImpl {
             }
         }
         pQueue.add(maxIndex, item);
-        //System.out.println("Adding element: "+item);
     }
 
     public Comparable remove() {
@@ -33,23 +32,12 @@ public class PriorityQueueImpl {
             return null;
         }
         int maxIndex = 0;
-//        // find the index of the item with the lowest cost priority
-//        for (int i = 1; i < pQueue.size(); i++) {
-//            if (pQueue.get(i).compareTo(pQueue.get(maxIndex)) < 0) {
-//                maxIndex = i;
-//            }
-//        }
         Comparable result = pQueue.get(maxIndex);
-        //System.out.println("removing: "+result);
         pQueue.remove(maxIndex);
         return result;
     }
 
     public void remove(QNode item) {
-        // of course this is simpler but we have to count node comparisons?
-        //pQueue.removeIf(node-> ((QNode) node).node == item.node);
-        //System.out.println("removing: "+result);
-
         if (isEmpty()) {
             System.out.println("The priority queue is empty!! can not remove.");
             return;
@@ -61,9 +49,9 @@ public class PriorityQueueImpl {
             if (((QNode)pQueue.get(i)).node == item.node) {
                 maxIndex = i;
                 // If I add this break it optimizes the whole thing by alot :(
+                pQueue.remove(maxIndex);
                 break;
             }
         }
-        pQueue.remove(maxIndex);
     }
 }

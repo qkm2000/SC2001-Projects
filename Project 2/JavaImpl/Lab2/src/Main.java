@@ -83,11 +83,10 @@ public class Main {
             }
             int[][] graphToTry = arr.stream().map(u -> u.stream().mapToInt(i -> i).toArray()).toArray(int[][]::new);
 
-            //graphToTry = graph1;
             long Start, End;
             long res;
             System.out.println("=======" + file.getFileName() + "=======");
-            //djikstra.NormalAlgo(graphToTry, 0);
+            djikstra.NormalAlgo(graphToTry, 0);
             System.out.println("=====Array=====");
             {
                 Start = System.nanoTime();
